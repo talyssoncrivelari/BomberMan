@@ -3,7 +3,7 @@ let intro, battleModeOption, themeSound;
 let startBattleSound, battleThemeSound;
 let battleStage01;
 
-let playerPC;
+let playerPC, playerPCImg;
 let topStop, lowDown, leftDown, rightDown;
 let upWalkingAni, downWalkingAni, leftWalkingAni, rightWalkingAni;
 
@@ -27,6 +27,8 @@ function preload() {
   rightWalkingAni = loadAnimation("./assets/RightAnimation/RightWalking01.png", "./assets/RightAnimation/RightWalking01.png");
   rightDown = loadImage("./assets/RightAnimation/RightDown.png");
 
+  playerPCImg = loadAnimation("./assets/DownAnimation/LowDown.png");
+
 }
 
 function setup() {
@@ -34,6 +36,13 @@ function setup() {
   displayW = windowWidth;
   displayH = windowHeight;
   createCanvas(displayW, displayH);
+
+  playerPC = createSprite(displayW/9 + 5, displayH/32 - 5);
+  playerPC.addAnimation("down", playerPCImg);
+  //playerPC.visible = false;
+  /*playerPC = createSprite(200, 200);
+  playerPC.addImage(topStop);*/
+  playerPC.scale = 5;
   
   upControl = createImg("./assets/Arrows/Up_Arrow.png");
   upControl.position(displayW/8, displayH - 210);
@@ -60,20 +69,17 @@ function setup() {
   battleModeOption.position(displayW/4, displayH/2 + 150);
   battleModeOption.size(displayW/3 + 200, displayH/16);
   battleModeOption.hide();
+  battleModeOption.class("startButton");
   battleModeOption.mouseClicked(forBattleMode);
 
   battleStage01 = createImg("./assets/BattleStage01.png");
   battleStage01.position(displayW/2048, displayH/2048);
   battleStage01.size(displayW, displayH);
   battleStage01.hide();
+  battleStage01.class("stage1")
 
-  playerPC = createImg("./assets/DownAnimation/LowDown.png");
-  playerPC.position(displayW/9 + 5, displayH/32 - 5);
-  playerPC.size(displayW/16, displayH/8);
-  playerPC.hide();
-  /*playerPC = createSprite(200, 200);
-  playerPC.addImage(topStop);
-  playerPC.scale = 5;*/
+
+  
   
 
   if(gameState == 0) {
@@ -96,13 +102,15 @@ function setup() {
 
 function draw() {
 
-  background("green");
+ // background("green");
 
   //upControl.mouseClicked(forUp);
 
   if(gameState == 1) {
-    battleStage01.show();
-    playerPC.show();
+  
+    
+    //playerPC.visible = true
+     battleStage01.show();
     /*if(startBattleSound.isPlaying() >= 1) {
       startBattleSound.stop();
     }*/
@@ -111,11 +119,11 @@ function draw() {
     }
     if(gameState == 1.1) {
       battleThemeSound.play();
-      battleThemeSound.noLoop();
+      battleThemeSound.looping = false;
     }
   }
 
-  //console.log(gameState);
+  console.log(gameState);
   drawSprites();
 }
 
@@ -138,7 +146,7 @@ function forBattleMode() {
 }
 
 function forUp() {
-  playerPC.position({x:0, y:0}, {x:0, y:5});
+  //playerPC.position({x:0, y:0}, {x:0, y:5});
 }
 
 function forDown() {
