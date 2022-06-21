@@ -2,11 +2,3 @@ html, body {
   margin: 0;
   padding: 0;
 }
-
-.startButton:hover{
-  border-bottom:  solid white 5px;
-}
-
-.stage1{
-  z-index: -1
-}
