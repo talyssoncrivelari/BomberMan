@@ -10,7 +10,7 @@ let bombs = 1;
 
 let wallGroup, topWall, bottonWall, leftWall, rightWall, wallImg, destroyerWallGroup;
 let brick, brickGroup;
-
+let enemyCount = [];
 function preload() {
   
   themeSound = loadSound("./audio/Intro.mp3");
@@ -31,7 +31,7 @@ function preload() {
 
   playerPCImg = loadImage("./assets/DownAnimation/LowDown.png");
 */
-  wallImg = loadImage("./assets/wall.png");
+ // wallImg = loadImage("./assets/wall.png");
 
 }
 
@@ -41,26 +41,41 @@ function setup() {
   displayH = windowHeight;
   createCanvas(displayW, displayH);
 
-  playerPC = createSprite(displayW/2 - 357, displayH/2 - 225, 45, 45);
+  playerPC = createSprite(displayW/2 - 357, displayH/2 - 225, 40, 40);
   playerPC.visible = false;
   playerPC.shapeColor = "white";
 
+  var enemyVelocitys = [-4,4]
+  var vx = Math.round(random(enemyVelocitys))
+  var vy = Math.round(random(enemyVelocitys))
+
   enemyGroup = new Group();
-  redEnemy = createSprite(displayW/2 + 363.5, displayH/2 - 225, 45, 45);
+  redEnemy = createSprite(displayW/2 + 363.5, displayH/2 - 225, 40, 40);
   redEnemy.visible = false;
   redEnemy.shapeColor = "red";
+  redEnemy.velocityX = vx;
+  redEnemy.velocityY = vy;
   enemyGroup.add(redEnemy);
-  greenEnemy = createSprite(displayW/2 + 3, displayH/2, 45, 45);
+
+  greenEnemy = createSprite(displayW/2 + 3, displayH/2, 40, 40);
   greenEnemy.visible = false;
   greenEnemy.shapeColor = "green";
+  greenEnemy.velocityX = vx;
+  greenEnemy.velocityY = vy;
   enemyGroup.add(greenEnemy);
-  blueEnemy = createSprite(displayW/2 - 357, displayH/2 + 225, 45, 45);
+
+  blueEnemy = createSprite(displayW/2 - 357, displayH/2 + 225, 40, 40);
   blueEnemy.visible = false;
   blueEnemy.shapeColor = "blue";
+  blueEnemy.velocityX = vx;
+  blueEnemy.velocityY = vy;
   enemyGroup.add(blueEnemy);
+
   yellowEnemy = createSprite(displayW/2 + 363.5, displayH/2 + 225, 45, 45);
   yellowEnemy.visible = false;
   yellowEnemy.shapeColor = "yellow";
+  yellowEnemy.velocityX = vx;
+  yellowEnemy.velocityY = vy;
   enemyGroup.add(yellowEnemy)
 
   battleModeOption = createImg("./assets/BattleGameOption.png");
@@ -154,30 +169,30 @@ function draw() {
   playerPC.collide(rightWall);
   playerPC.collide(wallGroup);
   playerPC.collide(brickGroup);
-  redEnemy.collide(topWall);
-  redEnemy.collide(bottonWall);
-  redEnemy.collide(leftWall);
-  redEnemy.collide(rightWall);
-  redEnemy.collide(wallGroup);
-  redEnemy.collide(brickGroup);
-  greenEnemy.collide(topWall);
-  greenEnemy.collide(bottonWall);
-  greenEnemy.collide(leftWall);
-  greenEnemy.collide(rightWall);
-  greenEnemy.collide(wallGroup);
-  greenEnemy.collide(brickGroup);
-  blueEnemy.collide(topWall);
-  blueEnemy.collide(bottonWall);
-  blueEnemy.collide(leftWall);
-  blueEnemy.collide(rightWall);
-  blueEnemy.collide(wallGroup);
-  greenEnemy.collide(brickGroup);
-  yellowEnemy.collide(topWall);
-  yellowEnemy.collide(bottonWall);
-  yellowEnemy.collide(leftWall);
-  yellowEnemy.collide(rightWall);
-  yellowEnemy.collide(wallGroup);
-  yellowEnemy.collide(brickGroup);
+  redEnemy.bounceOff(topWall);
+  redEnemy.bounceOff(bottonWall);
+  redEnemy.bounceOff(leftWall);
+  redEnemy.bounceOff(rightWall);
+  redEnemy.bounceOff(wallGroup);
+  redEnemy.bounceOff(brickGroup);
+  greenEnemy.bounceOff(topWall);
+  greenEnemy.bounceOff(bottonWall);
+  greenEnemy.bounceOff(leftWall);
+  greenEnemy.bounceOff(rightWall);
+  greenEnemy.bounceOff(wallGroup);
+  greenEnemy.bounceOff(brickGroup);
+  blueEnemy.bounceOff(topWall);
+  blueEnemy.bounceOff(bottonWall);
+  blueEnemy.bounceOff(leftWall);
+  blueEnemy.bounceOff(rightWall);
+  blueEnemy.bounceOff(wallGroup);
+  blueEnemy.bounceOff(brickGroup)
+  yellowEnemy.bounceOff(topWall);
+  yellowEnemy.bounceOff(bottonWall);
+  yellowEnemy.bounceOff(leftWall);
+  yellowEnemy.bounceOff(rightWall);
+  yellowEnemy.bounceOff(wallGroup);
+  yellowEnemy.bounceOff(brickGroup);
   
   if(gameState == 1) {
 
@@ -210,7 +225,21 @@ function draw() {
     if(keyDown("D")) {
       playerPC.x = playerPC.x + 8;
     }
+
+    enemyFire(blueEnemy);
+    enemyFire(yellowEnemy);
+    enemyFire(redEnemy);
+    enemyFire(greenEnemy);
+    //animationCorrection()
   }
+
+  if(gameState === 3){
+  
+    var mensagem = createElement("h1", "Game over!")
+    mensagem.position(width/2 , height/2)
+    console.log("game over!!")
+  }
+
   
   //console.log(gameState);
   drawSprites();
@@ -326,22 +355,119 @@ function forRight() {
 
 function keyPressed() {
   if(keyCode === 32 && gameState == 2) {
-    console.log(bombs);
+    //console.log(bombs);
     bombGenerator(playerPC.x, playerPC.y);
   }
 }
 
 function bombGenerator(x, y) {
+  
+
   bomb = createSprite(x, y, 65, 45);
   bomb.shapeColor = "black";
   bomb.debug = true;
   bomb.setCollider("rectangle", 0, 0, 180, 200);
   bombs.add(bomb);
-  setTimeout(() => {
-    bomb.destroy();
-  }, 2000);
+  explosion();
 }
 
-function explosion(index) {
+function explosion() {
+  for(let i = 0; i < bombs.length; i++){
+    
+
+    setTimeout(() => {
+      collisionWithBricks(i);
+      collisionWithEnemys(i);
+      collisionWithPlayer(i)
+      bombs[i].destroy();
+    }, 2000);
+  }
+}
+
+function newCollide(spriteA,spriteB,x)
+{
+  if(spriteB !== undefined || spriteA !== undefined){
+         var d = dist(spriteA.position.x,spriteA.position.y,spriteB.position.x,spriteB.position.y);
+         //console.log(d)
+          if(d<=x)
+            {
+               return true; 
+               d = 0;
+            }
+            else{
+              return false;
+              d = 0
+            }
+  }
+}
+
+
+function collisionWithBricks(index) {
+  for (var i = 0; i < brickGroup.length; i++) {
+    if (brickGroup[i]!== undefined) {
+    if (newCollide(bombs[index],brickGroup[i], 150) === true) { 
+       brickGroup[i].destroy();
+      }
+    }
+  }
+}
+
+function collisionWithEnemys(index) {
+  for (var i = 0; i < enemyGroup.length; i++) {
+    if(enemyGroup[i] !== undefined){
+    if ( newCollide(bombs[index],enemyGroup[i], 100) === true) { 
+       enemyGroup[i].visible= false;
+      }
+    }
+  }
+}
+
+function collisionWithPlayer(index) {
+    if ( newCollide(bombs[index], playerPC, 100) === true) { 
+       playerPC.visible = false;
+       gameState = 3
+      }
+}
+
+
+function animationCorrection(){
+  for (let i = 0; i < enemyGroup.length; i++) {
+    
+    if(enemyGroup.velocityX > 0){
+      enemyGroup[i].changeAnimation("right")
+    }
+  
+    else{
+      enemyGroup[i].changeAnimation("left")
+    }
+  }
+  
+}
+
+
+function enemyKill(enemy){
+  // caçar o jogador
+
+}
+
+function enemyRun(){
+  //correr de bombas
+}
+
+function enemyFire(enemy){
+   //TEM UM BUG AQUI QUE NAO PARA DE FZER BOMBAS ;c
+  if(enemy.visible ==true){
+    if(frameCount % 150 === 0){
+      bomb = createSprite(enemy.x, enemy.y,65,45);
+      bomb.shapeColor = "black";
+      bomb.debug = true;
+      bomb.setCollider("rectangle", 0, 0, 180, 200);
+      bombs.add(bomb);
+      explosion();
+  
+     }
+  } 
+  
+    
   
 }
